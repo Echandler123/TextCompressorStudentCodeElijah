@@ -30,36 +30,34 @@
 public class TextCompressor {
 
     private static void compress() {
-
         // TODO: Complete the compress() method
-        String text = BinaryStdIn.readString();
-        int length = text.length();
-        String word = "";
+        String line =   BinaryStdIn.readString();
+        TST tst = new TST();
         int code = 0;
-        String [] dictionary = new String[256];
-        for(int i = 0; i < length; i++){
-            char c = text.charAt(i);
-            if(c != ' '){
-                word += c;
-            }
-            else{
-                word = "";
-            }
+        while(!BinaryStdIn.isEmpty()){
+            String prefix = tst.getLongestPrefix(line);
+            BinaryStdOut.write(tst.lookup(prefix), 8);
+            tst.insert(prefix + line.charAt(prefix.length()), code++);
+            line = line.substring(prefix.length());
         }
-        BinaryStdOut.write(word.length(), 8);
-        for(int i =0; i < word.length();i++){
-            char c = word.charAt(i);
-            code += (int) c;
-        }
-        BinaryStdOut.write(code, 8);
         BinaryStdOut.close();
+
+//        read data into String text
+//                index = 0
+//        while index < text.length:
+//        prefix = longest coded word that matches text @ index
+//        write out that code
+//        if possible, look ahead to the next character
+//        append that character to prefix
+//        associate prefix with the next code (if available)
+//        index += prefix.length
+//        write out EOF and close
+
+
     }
 
     private static void expand() {
-
         // TODO: Complete the expand() method
-        String text = BinaryStdIn.readString();
-        int length = text.length();
 
 
 
