@@ -31,17 +31,21 @@ public class TextCompressor {
 
     private static void compress() {
         // TODO: Complete the compress() method
-        String line =   BinaryStdIn.readString();
+        String line = BinaryStdIn.readString();
         TST tst = new TST();
+        int index = 0;
         int code = 0;
-        while(!BinaryStdIn.isEmpty()){
-            String prefix = tst.getLongestPrefix(line);
+        for(int i =0; i < 256; i++) {
+            tst.insert("" + (char) i, code++);
+        }
+        while(index < line.length()) {
+            String prefix = tst.getLongestPrefix(line,index);
             BinaryStdOut.write(tst.lookup(prefix), 8);
             tst.insert(prefix + line.charAt(prefix.length()), code++);
-            line = line.substring(prefix.length());
+            index += prefix.length();
         }
+        BinaryStdOut.write(256, 8);
         BinaryStdOut.close();
-
 //        read data into String text
 //                index = 0
 //        while index < text.length:
@@ -52,15 +56,9 @@ public class TextCompressor {
 //        associate prefix with the next code (if available)
 //        index += prefix.length
 //        write out EOF and close
-
-
     }
-
     private static void expand() {
         // TODO: Complete the expand() method
-
-
-
 
 
 
