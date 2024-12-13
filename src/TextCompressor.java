@@ -29,18 +29,26 @@
  */
 public class TextCompressor {
     private static void compress() {
+        // Read in the input String
         String line = BinaryStdIn.readString();
+        // Create TST to store string and code pairs
         TST tst = new TST();
         int index = 0;
-        int code = 0;
+        int MaxCode = 4096;
+        int code = 257;
+        // Fill TST with single character strings first
         for(int i =0; i < 256; i++) {
-            tst.insert("" + (char) i, code++);
+            tst.insert("" + (char) i, i);
         }
+        // Loop through the input string
         while(index < line.length()) {
+            // Get the longest prefix of the current index
             String prefix = tst.getLongestPrefix(line,index);
+            // Write the code for the prefix
             BinaryStdOut.write(tst.lookup(prefix), 12);
-            if(index + prefix.length() < line.length() && code < 4096){
-                tst.insert(prefix + line.charAt(prefix.length()), code++);
+            // If there is room in the TST and the prefix is not already in the TST add it
+            if(index + prefix.length() < line.length() && code < MaxCode){
+                tst.insert(prefix + line.charAt(prefix.length() + index), code++);
             }
             index += prefix.length();
         }
@@ -48,14 +56,18 @@ public class TextCompressor {
         BinaryStdOut.close();
     }
     private static void expand() {
+        // Create a dictionary to look up strings by their code
         String[] codes = new String[4096];
+        // Add single character strings to the dictionary first
         for (int i = 0; i < 256; i++) {
             codes[i] = "" + (char) i;
         }
         int eofCode = 256;
         codes[256] = "";
         int currentMaxCode = 257;
+        // Read in the first code
         int codeword = BinaryStdIn.readInt(12);
+        // If the first code is the eof code, close the output and return
         if (codeword == eofCode) {
             BinaryStdOut.close();
             return;
@@ -63,14 +75,20 @@ public class TextCompressor {
         String currentPrefix = codes[codeword];
         BinaryStdOut.write(currentPrefix);
         String nextPrefix = "";
+        // Loop through the rest of the codes
         while (codeword != eofCode) {
             codeword = BinaryStdIn.readInt(12);
+            // If the code is in the dictionary, get the next prefix
             if (codeword < currentMaxCode) {
                 nextPrefix = codes[codeword];
-            } else if (codeword == currentMaxCode) {
+            }
+            // Special case where code is the max at this point so there is no prefix counterpart for this code
+            else if (codeword == currentMaxCode) {
+                // Make the next prefix based of the current prefix and the first character of the current prefix
                 nextPrefix = currentPrefix + currentPrefix.charAt(0);
             }
             BinaryStdOut.write(nextPrefix);
+            // Add the next prefix to the dictionary if there is room
             if (currentMaxCode < 4096) {
                 codes[currentMaxCode++] = currentPrefix + nextPrefix.charAt(0);
             }
