@@ -28,7 +28,6 @@
  *  @author Zach Blick, Elijah Chandler
  */
 public class TextCompressor {
-
     private static void compress() {
         String line = BinaryStdIn.readString();
         TST tst = new TST();
@@ -49,23 +48,36 @@ public class TextCompressor {
         BinaryStdOut.close();
     }
     private static void expand() {
-        String[] codeDictionary = new String[4096];
-        for(int i = 0; i < 256; i++) {
-            codeDictionary[i] = "" + (char) i;
+        String[] codes = new String[4096];
+        for (int i = 0; i < 256; i++) {
+            codes[i] = "" + (char) i;
         }
-        codeDictionary[256] = "";
+        int eofCode = 256;
+        codes[256] = "";
         int currentMaxCode = 257;
         int codeword = BinaryStdIn.readInt(12);
-        if(codeword == 256) {
+        if (codeword == eofCode) {
             BinaryStdOut.close();
             return;
         }
-        String currentString = codeDictionary[codeword];
-        BinaryStdOut.write(currentString);
-        String nextString = "";
+        String currentPrefix = codes[codeword];
+        BinaryStdOut.write(currentPrefix);
+        String nextPrefix = "";
+        while (codeword != eofCode) {
+            codeword = BinaryStdIn.readInt(12);
+            if (codeword < currentMaxCode) {
+                nextPrefix = codes[codeword];
+            } else if (codeword == currentMaxCode) {
+                nextPrefix = currentPrefix + currentPrefix.charAt(0);
+            }
+            BinaryStdOut.write(nextPrefix);
+            if (currentMaxCode < 4096) {
+                codes[currentMaxCode++] = currentPrefix + nextPrefix.charAt(0);
+            }
+            currentPrefix = nextPrefix;
+        }
         BinaryStdOut.close();
     }
-
     public static void main(String[] args) {
         if      (args[0].equals("-")) compress();
         else if (args[0].equals("+")) expand();
