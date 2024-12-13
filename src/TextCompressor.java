@@ -36,7 +36,7 @@ public class TextCompressor {
         int index = 0;
         int MaxCode = 4096;
         int code = 257;
-        // Fill TST with single character strings first
+        // Fill the TST with single characters first
         for(int i =0; i < 256; i++) {
             tst.insert("" + (char) i, i);
         }
@@ -58,7 +58,7 @@ public class TextCompressor {
     private static void expand() {
         // Create a dictionary to look up strings by their code
         String[] codes = new String[4096];
-        // Add single character strings to the dictionary first
+        // Add single characters to the dictionary first
         for (int i = 0; i < 256; i++) {
             codes[i] = "" + (char) i;
         }
