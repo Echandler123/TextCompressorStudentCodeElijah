@@ -30,7 +30,6 @@
 public class TextCompressor {
 
     private static void compress() {
-        // TODO: Complete the compress() method
         String line = BinaryStdIn.readString();
         TST tst = new TST();
         int index = 0;
@@ -40,29 +39,30 @@ public class TextCompressor {
         }
         while(index < line.length()) {
             String prefix = tst.getLongestPrefix(line,index);
-            BinaryStdOut.write(tst.lookup(prefix), 8);
-            tst.insert(prefix + line.charAt(prefix.length()), code++);
+            BinaryStdOut.write(tst.lookup(prefix), 12);
+            if(index + prefix.length() < line.length() && code < 4096){
+                tst.insert(prefix + line.charAt(prefix.length()), code++);
+            }
             index += prefix.length();
         }
-        BinaryStdOut.write(256, 8);
+        BinaryStdOut.write(256, 12);
         BinaryStdOut.close();
-//        read data into String text
-//                index = 0
-//        while index < text.length:
-//        prefix = longest coded word that matches text @ index
-//        write out that code
-//        if possible, look ahead to the next character
-//        append that character to prefix
-//        associate prefix with the next code (if available)
-//        index += prefix.length
-//        write out EOF and close
     }
     private static void expand() {
-        // TODO: Complete the expand() method
-
-
-
-
+        String[] codeDictionary = new String[4096];
+        for(int i = 0; i < 256; i++) {
+            codeDictionary[i] = "" + (char) i;
+        }
+        codeDictionary[256] = "";
+        int currentMaxCode = 257;
+        int codeword = BinaryStdIn.readInt(12);
+        if(codeword == 256) {
+            BinaryStdOut.close();
+            return;
+        }
+        String currentString = codeDictionary[codeword];
+        BinaryStdOut.write(currentString);
+        String nextString = "";
         BinaryStdOut.close();
     }
 
